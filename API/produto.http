@@ -1,0 +1,4 @@
+GET  http://localhost:5292/API/produto
+
+###Cadastrar
+POST http://localhost:5292
