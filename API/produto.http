@@ -1,4 +1,31 @@
-GET  http://localhost:5292/API/produto
+### Listagem de produtos
+GET http://localhost:5292/api/produto/listar
 
-###Cadastrar
-POST http://localhost:5292
+### Cadastro de produtos
+POST http://localhost:5292/api/produto/cadastrar/Console/XBOX/3000
+### Buscar produto
+GET http://localhost:5292/api/produto/buscar/Celular
+
+# ### Cadastro produto em exato
+# POST http://localhost:5292/api/produto/cadastrar
+# Content-Type: application/json
+
+# {
+#     "nome": "Notebook Acer",
+#     "descricao": "ACER Notebook Aspire 5 A515-56-32PG, Intel Core I3 11ª geração, 4GB, 256GB SDD, Windows11, Prata",
+#     "preco": 2550
+
+# }
+
+# ### Alterar produto
+# PATCH http://localhost:5292/api/produto/alterar
+# Content-Type: application/json
+
+# {
+#     "id": 4,
+#     "categoriaID": 2,
+#     "nome": "Notebook Acer",
+#     "descricao": "ACER Notebook Aspire 5 A515-56-32PG, Intel Core I3 11ª geração, 4GB, 256GB SDD, Windows11, Prata",
+#     "preco": 2550
+
+# }
