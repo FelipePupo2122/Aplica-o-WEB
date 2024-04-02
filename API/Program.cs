@@ -4,13 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
 
-List<Produto> produtos =
-[
-    new Produto("Celular", "Android", 4500.5),
-    new Produto("Celular", "IOS", 3000),
-    new Produto("Televisão", "LG", 2000),
-    new Produto("Cafeteira", "Oaster", 250)
-];
+List<Produto> produtos = new List<Produto>();
+
 
 // Endpoints = Funcionalidades - JSON
 // Cadastrar um produto na lista
@@ -19,14 +14,8 @@ List<Produto> produtos =
 // Realizar as operações alteração e remoção da lista
 
 // POST: http://localhost:5292/api/produto/cadastrar/nome/descricao/preco
-app.MapPost("/api/produto/cadastrar/",
-    ([FromRoute] string nome, [FromRoute] string descricao, [FromRoute] double preco) =>
+app.MapPost("/api/produto/cadastrar/", ([FromBody] Produto produto) =>
 {
-    Produto produto = new Produto(nome, descricao, preco);
-    produto.Nome = nome;
-    produto.Descricao = descricao;
-    produto.Preco = preco;
-
     produtos.Add(produto);
 
     return Results.Created("Foi completado o cadastro do", produto);
@@ -49,5 +38,37 @@ app.MapGet("/api/produto/buscar/{nome}", ([FromRoute] string nome) =>
     }
     return Results.NotFound("Produto não encontrado");
 });
+
+
+app.MapDelete("/api/produto/remover", ([FromBody] Produto produtoParaRemover) =>
+{
+    var produtoExistente = produtos.FirstOrDefault(p =>
+        p.Nome == produtoParaRemover.Nome &&
+        p.Descricao == produtoParaRemover.Descricao &&
+        p.Preco == produtoParaRemover.Preco);
+
+    if (produtoExistente != null)
+    {
+        produtos.Remove(produtoExistente);
+        return Results.NoContent();
+    }
+
+    return Results.NotFound("Produto não encontrado!");
+});
+
+app.MapPatch("/api/produto/alterar/{id}", ([FromRoute] string id, [FromBody] Produto produtoAtualizado) =>
+{
+    var produtoExistente = produtos.FirstOrDefault(p => p.Id == id);
+    if (produtoExistente != null)
+    {
+        // Atualiza as informações do produto
+        produtoExistente.Nome = produtoAtualizado.Nome;
+        produtoExistente.Descricao = produtoAtualizado.Descricao;
+        produtoExistente.Preco = produtoAtualizado.Preco;
+
+    }
+});
+
+
 
 app.Run();

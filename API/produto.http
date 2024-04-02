@@ -2,13 +2,41 @@
 GET http://localhost:5292/api/produto/listar
 
 ### Cadastro de produtos
-POST http://localhost:5292/api/produto/cadastrar/Console/XBOX/3000
-### Buscar produto
-GET http://localhost:5292/api/produto/buscar/Celular
+POST http://localhost:5292/api/produto/cadastrar
+Content-Type: application/json
 
-# ### Cadastro produto em exato
-# POST http://localhost:5292/api/produto/cadastrar
-# Content-Type: application/json
+{
+    "nome": "Tijola",
+    "descricao": "6 furos",
+    "preco": 7.00
+
+}
+
+### Buscar produto
+GET http://localhost:5292/api/produto/buscar/Tijol
+### Deletar Produto
+
+### Remover um produto
+DELETE http://localhost:5292/api/produto/remover
+Content-Type: application/json
+
+{
+     "nome": "Tijola",
+    "descricao": "6 furos",
+    "preco": 7.00
+}
+
+###
+PATCH http://localhost:5292/api/produto/alterar/0ad83007-28bb-4bb4-8747-467fd3e6db94
+Content-Type: application/json
+
+{
+    "Nome": "Novo Nome",
+    "Descricao": "Nova Descrição",
+    "Preco": 10.99
+}
+
+
 
 # {
 #     "nome": "Notebook Acer",
