@@ -1,7 +1,6 @@
 namespace API.Models;
 public class Produto
 {
-    // public Produto() { }
 
     public Produto(string nome, string descricao, double preco)
     {
@@ -16,6 +15,7 @@ public class Produto
     public string? Nome { get; set; }
     public string? Descricao { get; set; }
     public double Preco { get; set; }
+    public int Quantidade { get; set; }
     public DateTime CriadoEm { get; set; }
 
 }

@@ -72,3 +72,8 @@ app.MapPatch("/api/produto/alterar/{id}", ([FromRoute] string id, [FromBody] Pro
 
 
 app.Run();
+
+
+
+
+
