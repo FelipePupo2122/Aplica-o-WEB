@@ -6,14 +6,15 @@ POST http://localhost:5292/api/produto/cadastrar
 Content-Type: application/json
 
 {
-    "nome": "Tijola",
-    "descricao": "6 furos",
-    "preco": 7.00
+    "nome": "Lajota",
+    "descricao": "Lisa",
+    "quantidade" : 2,
+    "preco": 14.00
 
 }
 
 ### Buscar produto
-GET http://localhost:5292/api/produto/buscar/Tijol
+GET http://localhost:5292/api/produto/buscar/e3731d35-450a-4038-958d-d2fc82197ff5
 ### Deletar Produto
 
 ### Remover um produto

@@ -2,6 +2,8 @@ using API.Models;
 using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
+//registrar o serviço do banco
+builder.Services.AddDbContext<AppDataContext>();
 var app = builder.Build();
 
 List<Produto> produtos = new List<Produto>();
@@ -14,29 +16,39 @@ List<Produto> produtos = new List<Produto>();
 // Realizar as operações alteração e remoção da lista
 
 // POST: http://localhost:5292/api/produto/cadastrar/nome/descricao/preco
-app.MapPost("/api/produto/cadastrar/", ([FromBody] Produto produto) =>
+app.MapPost("/api/produto/cadastrar/", ([FromBody] Produto produto,
+    [FromServices] AppDataContext context) =>
 {
-    produtos.Add(produto);
-
+    //add produto na tabela
+    context.Produtos.Add(produto);
+    context.SaveChanges();
     return Results.Created("Foi completado o cadastro do", produto);
 
 });
 
 // GET: http://localhost:5292/api/produto/listar
-app.MapGet("/api/produto/listar", () => produtos);
+app.MapGet("/api/produto/listar", ([FromServices] AppDataContext context) =>
+{
+    if (context.Produtos.Any())
+    {
+        return Results.Ok(context.Produtos.ToList());
+    }
+    return Results.NotFound("não existem produtos na tabela");
+});
 
-// GET: http://localhost:5292/api/produto/buscar/{nomedoproduto}
-app.MapGet("/api/produto/buscar/{nome}", ([FromRoute] string nome) =>
+// GET: http://localhost:5292/api/produto/buscar/{id}
+app.MapGet("/api/produto/buscar/{id}", ([FromRoute] string id,
+ [FromServices] AppDataContext context) =>
 {
     //Endpoint com várias linhas de código
-    for (int i = 0; i < produtos.Count; i++)
+
+    Produto? produto = context.Produtos.FirstOrDefault(x => x.Id == id);
+
+    if (produto is null)
     {
-        if (produtos[i].Nome == nome)
-        {
-            return Results.Ok(produtos[i]);
-        }
+        return Results.NotFound("Produto não encontrado");
     }
-    return Results.NotFound("Produto não encontrado");
+    return Results.Ok(produto);
 });
 
 
