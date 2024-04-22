@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using API.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,14 +16,25 @@ List<Produto> produtos = new List<Produto>();
 // b) Através das informações no corpo da requisição
 // Realizar as operações alteração e remoção da lista
 
-// POST: http://localhost:5292/api/produto/cadastrar/nome/descricao/preco
+// POST: http://localhost:5292/api/produto/cadastrar/nome/descricao/preco/quantidade
 app.MapPost("/api/produto/cadastrar/", ([FromBody] Produto produto,
     [FromServices] AppDataContext context) =>
 {
+    List<ValidationResult> erros = new List<ValidationResult>();
+    if (!Validator.TryValidateObject(produto, new ValidationContext(produto), erros, true))
+    {
+        return Results.BadRequest(erros);
+    }
     //add produto na tabela
-    context.Produtos.Add(produto);
-    context.SaveChanges();
-    return Results.Created("Foi completado o cadastro do", produto);
+    Produto? produtoProcura = context.Produtos.FirstOrDefault(x => x.Nome == produto.Nome);
+    if (produtoProcura is null)
+    {
+
+        context.Produtos.Add(produto);
+        context.SaveChanges();
+        return Results.Created("Foi completado o cadastro do", produto);
+    }
+    return Results.BadRequest("Já existe um produto com esse nome, por favor alterar!");
 
 });
 
@@ -51,34 +63,38 @@ app.MapGet("/api/produto/buscar/{id}", ([FromRoute] string id,
     return Results.Ok(produto);
 });
 
-
-app.MapDelete("/api/produto/remover", ([FromBody] Produto produtoParaRemover) =>
+//DELETE: http://localhost:5292/api/produto/deletar/{idproduto}
+app.MapDelete("/api/produto/deletar/{id}", ([FromRoute] string id,
+[FromServices] AppDataContext context) =>
 {
-    var produtoExistente = produtos.FirstOrDefault(p =>
-        p.Nome == produtoParaRemover.Nome &&
-        p.Descricao == produtoParaRemover.Descricao &&
-        p.Preco == produtoParaRemover.Preco);
+    Produto? produto = context.Produtos.Find(id);
 
-    if (produtoExistente != null)
+    if (produto is null)
     {
-        produtos.Remove(produtoExistente);
-        return Results.NoContent();
+        return Results.NotFound("Produto não encontrado");
     }
-
-    return Results.NotFound("Produto não encontrado!");
+    context.Produtos.Remove(produto);
+    context.SaveChanges();
+    return Results.Ok(produtos);
 });
 
-app.MapPatch("/api/produto/alterar/{id}", ([FromRoute] string id, [FromBody] Produto produtoAtualizado) =>
+//ALTERAR: 
+app.MapPatch("/api/produto/alterar/{id}", ([FromRoute] string id, [FromBody] Produto produtoAtualizado,
+[FromServices] AppDataContext context) =>
 {
-    var produtoExistente = produtos.FirstOrDefault(p => p.Id == id);
-    if (produtoExistente != null)
-    {
-        // Atualiza as informações do produto
-        produtoExistente.Nome = produtoAtualizado.Nome;
-        produtoExistente.Descricao = produtoAtualizado.Descricao;
-        produtoExistente.Preco = produtoAtualizado.Preco;
 
+    Produto? produto = context.Produtos.Find(id);
+
+    if (produto is null)
+    {
+        return Results.NotFound("Produto não encontrado");
     }
+    produto.Nome = produtoAtualizado.Nome;
+    produto.Descricao = produtoAtualizado.Descricao;
+    produto.Preco = produtoAtualizado.Preco;
+    context.Produtos.Update(produto);
+    context.SaveChanges();
+    return Results.Ok("Produto Alterado com Sucesso");
 });
 
 

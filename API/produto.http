@@ -6,34 +6,27 @@ POST http://localhost:5292/api/produto/cadastrar
 Content-Type: application/json
 
 {
-    "nome": "Lajota",
-    "descricao": "Lisa",
+    "nome": "mao",
+    "descricao": "mole",
     "quantidade" : 2,
-    "preco": 14.00
+    "preco": 157.00
 
 }
 
 ### Buscar produto
 GET http://localhost:5292/api/produto/buscar/e3731d35-450a-4038-958d-d2fc82197ff5
+
 ### Deletar Produto
+DELETE http://localhost:5292/api/produto/deletar/e3731d35-450a-4038-958d-d2fc82197ff5
 
-### Remover um produto
-DELETE http://localhost:5292/api/produto/remover
-Content-Type: application/json
-
-{
-     "nome": "Tijola",
-    "descricao": "6 furos",
-    "preco": 7.00
-}
-
-###
-PATCH http://localhost:5292/api/produto/alterar/0ad83007-28bb-4bb4-8747-467fd3e6db94
+### alterar produto
+PATCH http://localhost:5292/api/produto/alterar/23254656-85b4-424e-8b1d-2d5e9ffdce28
 Content-Type: application/json
 
 {
     "Nome": "Novo Nome",
     "Descricao": "Nova Descrição",
+    "quantidade" : 2,
     "Preco": 10.99
 }
 
