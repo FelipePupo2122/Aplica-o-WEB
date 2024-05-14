@@ -1,6 +1,11 @@
+import { useState } from "react";
+
 function Soma() {
+  const [contador, setContador] = useState(0);
+
   function clicar() {
-    alert("Cliquei");
+    setContador(contador + 1);
+    console.log(contador);
   }
 
   return (
