@@ -10,7 +10,7 @@ Content-Type: application/json
     "descricao": "mole",
     "quantidade" : 2,
     "preco": 157.00
-
+    
 }
 
 ### Buscar produto
@@ -30,24 +30,3 @@ Content-Type: application/json
     "Preco": 10.99
 }
 
-
-
-# {
-#     "nome": "Notebook Acer",
-#     "descricao": "ACER Notebook Aspire 5 A515-56-32PG, Intel Core I3 11ª geração, 4GB, 256GB SDD, Windows11, Prata",
-#     "preco": 2550
-
-# }
-
-# ### Alterar produto
-# PATCH http://localhost:5292/api/produto/alterar
-# Content-Type: application/json
-
-# {
-#     "id": 4,
-#     "categoriaID": 2,
-#     "nome": "Notebook Acer",
-#     "descricao": "ACER Notebook Aspire 5 A515-56-32PG, Intel Core I3 11ª geração, 4GB, 256GB SDD, Windows11, Prata",
-#     "preco": 2550
-
-# }

@@ -5,6 +5,18 @@ using Microsoft.AspNetCore.Mvc;
 var builder = WebApplication.CreateBuilder(args);
 //registrar o serviço do banco
 builder.Services.AddDbContext<AppDataContext>();
+
+builder.Services.AddCors(
+    options =>
+    {
+        options.AddPolicy("AcessoTotal",
+        builder => builder.
+        AllowAnyOrigin().
+        AllowAnyHeader().
+        AllowAnyMethod());
+    }
+);
+
 var app = builder.Build();
 
 List<Produto> produtos = new List<Produto>();
@@ -98,10 +110,5 @@ app.MapPatch("/api/produto/alterar/{id}", ([FromRoute] string id, [FromBody] Pro
 });
 
 
-
+app.UseCors("AcessoTotal");
 app.Run();
-
-
-
-
-

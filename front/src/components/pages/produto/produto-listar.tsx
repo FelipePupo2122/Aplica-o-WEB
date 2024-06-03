@@ -1,7 +1,9 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { Box, Button, Table, Tbody, Td, Th, Thead, Tr, Heading } from "@chakra-ui/react";
 import { Produto } from "../../../Models/Produto";
 
-function ListarProdutos() {
+function ProdutoListar() {
   const [produtos, setProdutos] = useState<Produto[]>([]);
 
   useEffect(() => {
@@ -14,56 +16,78 @@ function ListarProdutos() {
     fetchProdutos();
   }, []);
 
-  async function cadastrarProduto() {
-    const produto: Produto = {
-      nome: 'Dedo teste',
-      descricao: 'teste dedo',
-      preco: 157,
-      quantidade: 10
-    };
-    await fetch('http://localhost:5292/api/produto/cadastrar', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(produto)
-    })
-   .then((resposta) => resposta.json())
-   .then((produtoCadastrado: Produto) => {
-        console.log(produtoCadastrado);
-      });
+  function agruparProdutosPorData() {
+    // Agrupando os produtos por data
+    const agrupados: { [key: string]: Produto[] } = {};
+  
+    produtos.forEach((produto) => {
+      const dataCriacaoString = produto.criadoEm;
+      if (!dataCriacaoString) return; // Verifica se criadoEm é undefined
+  
+      const dataCriacao = new Date(dataCriacaoString);
+      const dataAtual = new Date();
+      const diferencaDias = Math.floor((dataAtual.getTime() - dataCriacao.getTime()) / (1000 * 3600 * 24));
+      let categoria;
+  
+      if (diferencaDias === 0) {
+        categoria = 'Hoje';
+      } else if (diferencaDias === 1) {
+        categoria = 'Ontem';
+      } else if (diferencaDias <= 7) {
+        categoria = 'Esta semana';
+      } else if (dataAtual.getMonth() === dataCriacao.getMonth()) {
+        categoria = 'Este mês';
+      } else {
+        categoria = 'Outros';
+      }
+  
+      if (!agrupados[categoria]) {
+        agrupados[categoria] = [];
+      }
+  
+      agrupados[categoria].push(produto);
+    });
+  
+    return agrupados;
   }
 
   return (
-    <div>
-      <h1>Listar produtos</h1>
-      <table style={{ borderCollapse: 'collapse' }}>
-        <thead>
-          <tr>
-            <th style={{ border: '1px solid black' }}>ID</th>
-            <th style={{ border: '1px solid black' }}>Nome</th>
-            <th style={{ border: '1px solid black' }}>Descrição</th>
-            <th style={{ border: '1px solid black' }}>Preço</th>
-            <th style={{ border: '1px solid black' }}>Quantidade</th>
-            <th style={{ border: '1px solid black' }}>Criado em</th>
-          </tr>
-        </thead>
-        <tbody>
-          {produtos.map((produto) => (
-            <tr key={produto.id}>
-              <td style={{ border: '1px solid black' }}>{produto.id}</td>
-              <td style={{ border: '1px solid black' }}>{produto.nome}</td>
-              <td style={{ border: '1px solid black' }}>{produto.descricao}</td>
-              <td style={{ border: '1px solid black' }}>R$ {produto.preco}</td>
-              <td style={{ border: '1px solid black' }}>{produto.quantidade}</td>
-              <td style={{ border: '1px solid black' }}>{produto.criadoEm}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <button onClick={cadastrarProduto}>Cadastrar</button>
-    </div>
+    <Box p={5}>
+      <Heading as="h1" size="xl" mb={5}>Listar produtos</Heading>
+      {Object.entries(agruparProdutosPorData()).map(([categoria, produtos]) => (
+        <Box key={categoria} mb={6}>
+          <Heading as="h2" size="lg" mb={3}>{categoria}</Heading>
+          <Table variant="striped" colorScheme="teal">
+            <Thead>
+              <Tr>
+                <Th>ID</Th>
+                <Th>Nome</Th>
+                <Th>Descrição</Th>
+                <Th>Preço</Th>
+                <Th>Quantidade</Th>
+                <Th>Criado em</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {produtos.map((produto) => (
+                <Tr key={produto.id}>
+                  <Td>{produto.id}</Td>
+                  <Td>{produto.nome}</Td>
+                  <Td>{produto.descricao}</Td>
+                  <Td>R$ {produto.preco}</Td>
+                  <Td>{produto.quantidade}</Td>
+                  <Td>{produto.criadoEm}</Td>
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
+        </Box>
+      ))}
+      <Link to="/cadastrar">
+        <Button mt={4} colorScheme="teal">Cadastrar Novo Produto</Button>
+      </Link>
+    </Box>
   );
 }
 
-export default ListarProdutos;
+export default ProdutoListar;
